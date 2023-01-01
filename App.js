@@ -2,7 +2,8 @@ import { useState } from 'react';
 import {
   StyleSheet,
   View,
-  FlatList
+  FlatList,
+  Button
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
@@ -10,12 +11,23 @@ import GoalItem from './components/GoalItem';
 import GoalInput from './components/GoalInput';
 
 export default function App() {
-
+  const [modalIsVisible, setModalIsVisible] = useState(false);
   const [courseGoals, setCourseGoals] = useState([]);
 
+  function startAddGoalHandler() {
+    setModalIsVisible(true);
+  }
+
+  function endGoalHandler() {
+    setModalIsVisible(false);
+  }
+
   function addGoalHandler(enteredGoalText) {
-    setCourseGoals((currenCourseGoals =>
-      [...currenCourseGoals, { text: enteredGoalText, id: Math.random().toString() }]));
+    setCourseGoals((currenCourseGoals) =>
+      [...currenCourseGoals, { text: enteredGoalText, id: Math.random().toString() },
+      ]);
+    endGoalHandler();
+
   }
 
   function deleteGoalHandler(id) {
@@ -26,7 +38,14 @@ export default function App() {
 
   return (
     <View style={styles.appContainer}>
-      <GoalInput onAddGoal={addGoalHandler} />
+      <Button
+        title='Add New Goal'
+        color="#555555"
+        onPress={startAddGoalHandler}></Button>
+      <GoalInput
+        visible={modalIsVisible}
+        onAddGoal={addGoalHandler}
+        onCancel={endGoalHandler} />
       <View style={styles.goalsContainer}>
         {/* use flatlist to have more optimized scrolling instead of scrollview */}
         <FlatList data={courseGoals} renderItem={(itemData) => {
